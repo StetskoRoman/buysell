@@ -2,13 +2,16 @@ package com.rv.buysell.services;
 
 import com.rv.buysell.models.Image;
 import com.rv.buysell.models.Product;
+import com.rv.buysell.models.User;
 import com.rv.buysell.repositories.ProductRepo;
+import com.rv.buysell.repositories.UserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -17,6 +20,7 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepo productRepo;
+    private final UserRepo userRepo;
 
     public List<Product> listProducts(String title) {
         if (title != null) {
@@ -25,7 +29,8 @@ public class ProductService {
         return productRepo.findAll();
     }
 
-    public void saveProduct(Product product, MultipartFile file1, MultipartFile file2, MultipartFile file3) throws IOException {
+    public void saveProduct(Principal principal, Product product, MultipartFile file1, MultipartFile file2, MultipartFile file3) throws IOException {
+        product.setUser(getUserByPrincipal(principal));
         Image image1;
         Image image2;
         Image image3;
@@ -43,10 +48,20 @@ public class ProductService {
             product.addImageToProduct(image3);
         }
 
-        log.info("Saving new Product. Title {}; Author {}", product.getTitle(), product.getAuthor());
+        log.info("Saving new Product. Title {}; Author {}", product.getTitle(), product.getUser().getEmail());
         Product productFromDb = productRepo.save(product);
-        productFromDb.setPreviewImageId(productFromDb.getImages().get(0).getId());
+        if (file1.getSize() != 0) {
+            productFromDb.setPreviewImageId(productFromDb.getImages().get(0).getId());
+        }
+
         productRepo.save(product);
+    }
+
+    public User getUserByPrincipal(Principal principal) {
+        if (principal == null) {
+            return new User();
+        }
+        return userRepo.findByEmail(principal.getName());
     }
 
     private Image toImageEntity(MultipartFile file) throws IOException {

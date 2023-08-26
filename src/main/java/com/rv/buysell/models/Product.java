@@ -27,7 +27,6 @@ public class Product {
 
     private int price;
     private String city;
-    private String author;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
     private List<Image> images = new ArrayList<>();
@@ -45,4 +44,8 @@ public class Product {
         image.setProduct(this);
         images.add(image);
     }
+
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @JoinColumn
+    private User user;
 }
