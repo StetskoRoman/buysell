@@ -7,13 +7,16 @@
 <h1>BUYSELL</h1>
 <hr>
 <#if user.email??>
-<h3>Имя пользователя: <i>${user.name}</i></h3>
+    <h3>Имя пользователя: <i>${user.name}</i></h3>
     <form action="/logout" method="post">
         <input type="hidden" name="_csrf" value="${_csrf.token}">
         <input type="submit" value="Выйти"/>
     </form>
-    <#else>
-        <a href="/login"> Войти </a></h1>
+    <#if user.isAdmin()>
+        <a href="/admin"><b>Панель администратора</b></a>
+    </#if>
+<#else>
+    <a href="/login"> Войти </a></h1>
 </#if>
 <hr>
 <h2>Товары со всей Беларуси</h2>
