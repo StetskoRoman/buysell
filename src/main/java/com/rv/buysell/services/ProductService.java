@@ -26,7 +26,7 @@ public class ProductService {
         if (title != null) {
             return productRepo.findByTitle(title);
         }
-        return productRepo.findAll();
+        return null;
     }
 
     public void saveProduct(Principal principal, Product product, MultipartFile file1, MultipartFile file2, MultipartFile file3) throws IOException {

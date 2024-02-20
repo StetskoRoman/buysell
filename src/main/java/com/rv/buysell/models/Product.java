@@ -44,7 +44,7 @@ public class Product {
         image.setProduct(this);
         images.add(image);
     }
-
+//@JoinColumn тут не надо вроде
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn
     private User user;
